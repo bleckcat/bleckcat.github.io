@@ -1,8 +1,15 @@
 {
-  "dependencies": {
-    "three": "^0.154.0"
+  "name": "bleckcat.github.io",
+  "version": "1.0.0",
+  "description": "My own website",
+  "main": "main.js",
+  "scripts": {
+    "test": "test",
+    "deploy": "gh-pages -d dist"
   },
-  "devDependencies": {
-    "vite": "^4.4.4"
+  "author": "bleckcat",
+  "license": "ISC",
+  "dependencies": {
+    "gh-pages": "^5.0.0"
   }
 }
