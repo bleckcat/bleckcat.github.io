@@ -1,7 +1,5 @@
 import * as THREE from "https://unpkg.com/three@0.154.0/build/three.module.js";
 
-movement.addListener();
-
 const canvas = document.querySelector(".webgl");
 const scene = new THREE.Scene();
 
@@ -20,25 +18,46 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 
 document.body.appendChild(renderer.domElement);
 
-const geometry = new THREE.BoxGeometry(20, 20, 0.1);
+const geometry = new THREE.BoxGeometry(20, 0.1, 20);
 const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-const cube = new THREE.Mesh(geometry, material);
+const groundPlane = new THREE.Mesh(geometry, material);
 
-const capsuleGeometry = new THREE.CapsuleGeometry(1, 1, 4, 8);
-const capsuleMaterial = new THREE.MeshBasicMaterial({ color: 0xfff });
+const capsuleGeometry = new THREE.CapsuleGeometry(1, 2, 4, 8);
+const capsuleMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
 const capsule = new THREE.Mesh(capsuleGeometry, capsuleMaterial);
 
-movement.controls(capsule);
+scene.add(groundPlane);
 
-camera.position.z = 8;
-camera.position.y = -16;
+// Move the ground plane slightly down to separate it from the capsule
+groundPlane.position.y = -1;
 
-capsule.rotation.x = Math.PI / 2;
-capsule.position.z = 2;
+// Move the capsule upwards along the y-axis by half of its height
+capsule.position.y = 1; // Half of the height of the capsule
 
-camera.rotation.x = 1;
-
-scene.add(cube);
 scene.add(capsule);
 
-renderer.render(scene, camera);
+const cameraPivot = new THREE.Object3D();
+const distance = 30;
+const spherical = new THREE.Spherical(distance, Math.PI / 2, 0); // Distance, phi (vertical angle), theta (horizontal angle)
+cameraPivot.position.setFromSpherical(spherical).add(capsule.position);
+camera.lookAt(groundPlane.position); // Look at the ground plane
+cameraPivot.add(camera);
+scene.add(cameraPivot);
+
+let mouseX = 0;
+
+function onMouseMove(event) {
+  mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+}
+
+window.addEventListener("mousemove", onMouseMove);
+camera.position.y += 7;
+function animate() {
+  requestAnimationFrame(animate);
+  spherical.theta -= mouseX * 0.02; // Adjust rotation speed
+  cameraPivot.position.setFromSpherical(spherical).add(capsule.position);
+  camera.lookAt(groundPlane.position); // Look at the ground plane
+  renderer.render(scene, camera);
+}
+
+animate();
