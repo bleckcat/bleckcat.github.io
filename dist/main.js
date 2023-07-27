@@ -15,32 +15,45 @@ const renderer = new THREE.WebGLRenderer({
 });
 
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true; // Enable shadow rendering
 
 document.body.appendChild(renderer.domElement);
 
-const geometry = new THREE.BoxGeometry(20, 0.1, 20);
-const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-const groundPlane = new THREE.Mesh(geometry, material);
+const geometry = new THREE.BoxGeometry(20, 0.5, 20);
+const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+const groundPlane = new THREE.Mesh(geometry, groundMaterial);
+groundPlane.receiveShadow = true; // Enable shadow receiving for the ground plane
 
 const capsuleGeometry = new THREE.CapsuleGeometry(1, 2, 4, 8);
-const capsuleMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+const capsuleMaterial = new THREE.MeshStandardMaterial({ color: 0xffff00 });
 const capsule = new THREE.Mesh(capsuleGeometry, capsuleMaterial);
+capsule.castShadow = true; // Enable shadow casting for the capsule
 
 scene.add(groundPlane);
-
-// Move the ground plane slightly down to separate it from the capsule
 groundPlane.position.y = -1;
 
-// Move the capsule upwards along the y-axis by half of its height
-capsule.position.y = 1; // Half of the height of the capsule
-
 scene.add(capsule);
+capsule.position.y = 1;
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
+
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+directionalLight.position.set(10, 20, 10); // Set position of the directional light
+directionalLight.castShadow = true; // Enable shadow casting for the light
+scene.add(directionalLight);
+
+// Set up shadow properties for the directional light
+directionalLight.shadow.mapSize.width = 1024;
+directionalLight.shadow.mapSize.height = 1024;
+directionalLight.shadow.camera.near = 1;
+directionalLight.shadow.camera.far = 50;
 
 const cameraPivot = new THREE.Object3D();
 const distance = 30;
-const spherical = new THREE.Spherical(distance, Math.PI / 2, 0); // Distance, phi (vertical angle), theta (horizontal angle)
+const spherical = new THREE.Spherical(distance, Math.PI / 2, 0);
 cameraPivot.position.setFromSpherical(spherical).add(capsule.position);
-camera.lookAt(groundPlane.position); // Look at the ground plane
+camera.lookAt(groundPlane.position);
 cameraPivot.add(camera);
 scene.add(cameraPivot);
 
@@ -52,11 +65,12 @@ function onMouseMove(event) {
 
 window.addEventListener("mousemove", onMouseMove);
 camera.position.y += 7;
+
 function animate() {
   requestAnimationFrame(animate);
-  spherical.theta -= mouseX * 0.02; // Adjust rotation speed
+  spherical.theta -= mouseX * 0.02;
   cameraPivot.position.setFromSpherical(spherical).add(capsule.position);
-  camera.lookAt(groundPlane.position); // Look at the ground plane
+  camera.lookAt(groundPlane.position);
   renderer.render(scene, camera);
 }
 
