@@ -5,6 +5,7 @@ import sceneLights from "./components/sceneLights";
 import sceneCameraConfig from "./components/sceneCamera";
 
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import modelPath from "/assets/phoenix_bird/phoenix.gltf";
 
 function setupThree(element) {
   const canvas = element;
@@ -36,7 +37,7 @@ function setupThree(element) {
 
   let mixer; // Declare the mixer variable in the outer scope
 
-  loader.load("src/models/phoenix_bird/phoenix.gltf", (gltf) => {
+  loader.load(modelPath, (gltf) => {
     const model = gltf.scene;
     scene.add(model);
     model.traverse((child) => {
