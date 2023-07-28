@@ -5,7 +5,8 @@ import sceneLights from "./components/sceneLights";
 import sceneCameraConfig from "./components/sceneCamera";
 
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import modelPath from "/assets/phoenix_bird/phoenix.gltf";
+import backgroundBall from "/assets/fantasy_sky_background/scene.gltf";
+import catModel from "/assets/behemot_cat/scene.gltf";
 
 function setupThree(element) {
   const canvas = element;
@@ -15,13 +16,14 @@ function setupThree(element) {
 
   const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
+    depthBuffer: true,
   });
 
   const camera = new THREE.PerspectiveCamera(
     50,
     window.innerWidth / window.innerHeight,
-    0.1,
-    1000
+    0.01,
+    2000
   );
 
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -29,59 +31,53 @@ function setupThree(element) {
 
   document.body.appendChild(renderer.domElement);
 
-  // createCapsule(scene);
-
   const ground = createGroundPlane(scene);
 
   const loader = new GLTFLoader();
 
-  let mixer; // Declare the mixer variable in the outer scope
-
-  loader.load(modelPath, (gltf) => {
+  loader.load(backgroundBall, (gltf) => {
     const model = gltf.scene;
     scene.add(model);
+
     model.traverse((child) => {
       if (child.isMesh) {
-        if (child.geometry.isBufferGeometry) {
-          // Compute vertex normals for BufferGeometry
-          child.geometry.computeVertexNormals();
-        } else {
-          // Compute vertex normals for Geometry (deprecated)
-          child.geometry.computeFaceNormals();
-          child.geometry.computeVertexNormals();
-        }
-        if (child.material.map) {
-          child.material.map.needsUpdate = true;
-          child.material.side = THREE.DoubleSide;
+        if (child.name === "background_mesh") {
+          const textureLoader = new THREE.TextureLoader();
+          const texture = textureLoader.load(
+            "assets/fantasy_sky_background/textures/Sky_background_emissive.jpeg"
+          );
+          const material = new THREE.MeshStandardMaterial({ map: texture });
+          material.flatShading = true;
+          child.material = material;
         }
       }
     });
 
-    if (gltf.animations && gltf.animations.length > 0) {
-      mixer = new THREE.AnimationMixer(model);
-      const action = mixer.clipAction(gltf.animations[0]);
-      action.time = 2; // Start at 2 seconds
-      action.setLoop(THREE.LoopOnce);
-      action.play();
-    }
-
-    model.scale.set(0.02, 0.02, 0.02);
-    model.position.set(0, 1, 0);
-
-    flyingBird();
+    model.scale.set(13, 13, 13);
   });
 
-  function flyingBird() {
-    requestAnimationFrame(flyingBird);
+  loader.load(catModel, (gltf) => {
+    const model = gltf.scene;
 
-    if (mixer) {
-      mixer.update();
-    }
+    scene.add(model);
 
-    renderer.render(scene, camera);
-  }
+    model.traverse((child) => {
+      if (child.isMesh) {
+        if (child.name === "background_mesh") {
+          const textureLoader = new THREE.TextureLoader();
+          const texture = textureLoader.load(
+            "assets/fantasy_sky_background/textures/Cat_Material_baseColor.png"
+          );
+          const material = new THREE.MeshStandardMaterial({ map: texture });
+          child.material = material;
+        }
+      }
+    });
 
-  // Scene and lights
+    // model.scale.set(13, 13, 13);
+    model.position.set(0, -1, 0);
+  });
+
   sceneLights(scene);
   sceneCameraConfig(camera, scene, renderer, ground);
 }

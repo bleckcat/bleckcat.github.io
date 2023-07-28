@@ -1,35 +1,20 @@
-import { Object3D, PerspectiveCamera, Spherical } from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-function sceneCameraConfig(camera, scene, renderer, pivotPosition) {
-  const cameraPivot = new Object3D();
-  const distance = 30;
-  const spherical = new Spherical(distance, Math.PI / 2, 0);
+function sceneCameraConfig(camera, scene, renderer) {
+  const controls = new OrbitControls(camera, renderer.domElement);
 
-  cameraPivot.position.setFromSpherical(spherical).add(pivotPosition.position);
-  camera.lookAt(pivotPosition.position);
-  cameraPivot.add(camera);
-  scene.add(cameraPivot);
+  camera.position.set(25, 25, 25);
 
-  let mouseX = 0;
+  controls.update();
 
-  function onMouseMove(event) {
-    mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-  }
+  function animate() {
+    requestAnimationFrame(animate);
 
-  window.addEventListener("mousemove", onMouseMove);
-  camera.position.y += 7;
+    controls.update();
 
-  function cameraMovement() {
-    requestAnimationFrame(cameraMovement);
-    spherical.theta -= mouseX * 0.02;
-    cameraPivot.position
-      .setFromSpherical(spherical)
-      .add(pivotPosition.position);
-    camera.lookAt(pivotPosition.position);
     renderer.render(scene, camera);
   }
-
-  cameraMovement();
+  animate();
 }
 
 export default sceneCameraConfig;
