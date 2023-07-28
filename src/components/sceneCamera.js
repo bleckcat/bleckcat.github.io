@@ -1,13 +1,6 @@
 import { Object3D, PerspectiveCamera, Spherical } from "three";
 
-function sceneCamera(scene, renderer, pivotPosition) {
-  const camera = new PerspectiveCamera(
-    50,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
-
+function sceneCameraConfig(camera, scene, renderer, pivotPosition) {
   const cameraPivot = new Object3D();
   const distance = 30;
   const spherical = new Spherical(distance, Math.PI / 2, 0);
@@ -39,4 +32,4 @@ function sceneCamera(scene, renderer, pivotPosition) {
   cameraMovement();
 }
 
-export default sceneCamera;
+export default sceneCameraConfig;
