@@ -1,7 +1,8 @@
 import * as THREE from "three";
+import createGroundPlane from "./components/ground";
 
 function setupThree(element) {
-  const canvas = document.querySelector(".webgl");
+  const canvas = element;
   const scene = new THREE.Scene();
 
   const camera = new THREE.PerspectiveCamera(
@@ -16,22 +17,16 @@ function setupThree(element) {
   });
 
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.shadowMap.enabled = true; // Enable shadow rendering
+  renderer.shadowMap.enabled = true;
 
   document.body.appendChild(renderer.domElement);
 
-  const geometry = new THREE.BoxGeometry(20, 0.5, 20);
-  const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
-  const groundPlane = new THREE.Mesh(geometry, groundMaterial);
-  groundPlane.receiveShadow = true; // Enable shadow receiving for the ground plane
+  const groundPlane = createGroundPlane(scene);
 
   const capsuleGeometry = new THREE.CapsuleGeometry(1, 2, 4, 8);
   const capsuleMaterial = new THREE.MeshStandardMaterial({ color: 0xffff00 });
   const capsule = new THREE.Mesh(capsuleGeometry, capsuleMaterial);
-  capsule.castShadow = true; // Enable shadow casting for the capsule
-
-  scene.add(groundPlane);
-  groundPlane.position.y = -1;
+  capsule.castShadow = true;
 
   scene.add(capsule);
   capsule.position.y = 1;
@@ -40,11 +35,10 @@ function setupThree(element) {
   scene.add(ambientLight);
 
   const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-  directionalLight.position.set(10, 20, 10); // Set position of the directional light
-  directionalLight.castShadow = true; // Enable shadow casting for the light
+  directionalLight.position.set(10, 20, 10);
+  directionalLight.castShadow = true;
   scene.add(directionalLight);
 
-  // Set up shadow properties for the directional light
   directionalLight.shadow.mapSize.width = 1024;
   directionalLight.shadow.mapSize.height = 1024;
   directionalLight.shadow.camera.near = 1;
