@@ -1,0 +1,13 @@
+*,
+body,
+html,
+button,
+input,
+textarea,
+a {
+  margin: 0;
+  padding: 0;
+  border: none;
+  text-decoration: none;
+  overflow: hidden;
+}
