@@ -2,7 +2,7 @@ import { BoxGeometry, Mesh, MeshStandardMaterial } from "three";
 
 function createGroundPlane(scene) {
   const geometry = new BoxGeometry(10, 0.5, 10);
-  const material = new MeshStandardMaterial({ color: 0x00 });
+  const material = new MeshStandardMaterial({ color: 0xfff });
   const plane = new Mesh(geometry, material);
 
   plane.receiveShadow = true;

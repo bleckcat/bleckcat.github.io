@@ -1,13 +1,11 @@
 import * as THREE from "three";
 import createGroundPlane from "./components/ground";
-import sceneLights from "./components/sceneLights";
-import sceneCameraConfig from "./components/sceneCamera";
 
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import backgroundBall from "/assets/fantasy_sky_background/scene.gltf";
-import catModel from "/assets/behemot_cat/scene.gltf";
 
-function setupThree(element) {
+function renderThreeJs(element) {
   const canvas = element;
 
   const scene = new THREE.Scene();
@@ -24,13 +22,20 @@ function setupThree(element) {
     0.01,
     2000
   );
+  // CONTROLS
+  const orbitControls = new OrbitControls(camera, renderer.domElement);
+  orbitControls.enableDamping = true;
+  orbitControls.minDistance = 5;
+  orbitControls.maxDistance = 15;
+  orbitControls.enablePan = false;
+  orbitControls.maxPolarAngle = Math.PI / 2 - 0.05;
+  orbitControls.update();
 
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.shadowMap.enabled = true;
 
-  document.body.appendChild(renderer.domElement);
-
-  const ground = createGroundPlane(scene);
+  const ambientLight = new THREE.AmbientLight(0xadd8e6, 3);
+  createGroundPlane(scene);
 
   const loader = new GLTFLoader();
 
@@ -55,8 +60,20 @@ function setupThree(element) {
     model.scale.set(13, 13, 13);
   });
 
-  sceneLights(scene);
-  sceneCameraConfig(camera, scene, renderer, ground);
+  const clock = new THREE.Clock();
+
+  // ANIMATE
+  function animate() {
+    let mixerUpdateDelta = clock.getDelta();
+
+    orbitControls.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+  document.body.appendChild(renderer.domElement);
+  animate();
+
+  scene.add(ambientLight);
 }
 
-export default setupThree;
+export default renderThreeJs;

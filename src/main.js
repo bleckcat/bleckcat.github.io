@@ -1,9 +1,9 @@
 import "./style.css";
-import setupThree from "./three";
+import renderThreeJs from "./three";
 
 document.querySelector("#app").innerHTML = `
   <canvas class="webgl">
   </canvas>
 `;
 
-setupThree(document.querySelector(".webgl"));
+renderThreeJs(document.querySelector(".webgl"));
