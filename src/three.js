@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import createGroundPlane from "./components/ground";
-import createCapsule from "./components/createCapsule";
 import sceneLights from "./components/sceneLights";
 import sceneCameraConfig from "./components/sceneCamera";
 
@@ -54,28 +53,6 @@ function setupThree(element) {
     });
 
     model.scale.set(13, 13, 13);
-  });
-
-  loader.load(catModel, (gltf) => {
-    const model = gltf.scene;
-
-    scene.add(model);
-
-    model.traverse((child) => {
-      if (child.isMesh) {
-        if (child.name === "background_mesh") {
-          const textureLoader = new THREE.TextureLoader();
-          const texture = textureLoader.load(
-            "assets/fantasy_sky_background/textures/Cat_Material_baseColor.png"
-          );
-          const material = new THREE.MeshStandardMaterial({ map: texture });
-          child.material = material;
-        }
-      }
-    });
-
-    // model.scale.set(13, 13, 13);
-    model.position.set(0, -1, 0);
   });
 
   sceneLights(scene);
