@@ -24,11 +24,14 @@ function renderThreeJs(element) {
   renderer.shadowMap.enabled = true;
   // CAMERA
   const camera = new THREE.PerspectiveCamera(
-    50,
+    45,
     window.innerWidth / window.innerHeight,
-    0.01,
-    2000
+    0.1,
+    1000
   );
+  camera.position.y = 5;
+  camera.position.z = 5;
+  camera.position.x = 0;
   // CONTROLS
   const orbitControls = new OrbitControls(camera, renderer.domElement);
   orbitControls.enableDamping = true;
@@ -73,7 +76,6 @@ function renderThreeJs(element) {
     scene.add(model);
 
     const gltfAnimations = gltf.animations;
-    console.log(gltfAnimations);
     const mixer = new THREE.AnimationMixer(model);
     const animationsMap = new Map();
     gltfAnimations
@@ -90,7 +92,7 @@ function renderThreeJs(element) {
       camera,
       "Idle"
     );
-
+    console.log(model);
     model.scale.set(0.001, 0.001, 0.001);
   });
 
@@ -130,7 +132,6 @@ function renderThreeJs(element) {
     requestAnimationFrame(animate);
   }
   document.body.appendChild(renderer.domElement);
-  animate();
 
   scene.add(ambientLight);
 
@@ -141,6 +142,8 @@ function renderThreeJs(element) {
     renderer.setSize(window.innerWidth, window.innerHeight);
   }
   window.addEventListener("resize", onWindowResize);
+
+  animate();
 }
 
 export default renderThreeJs;

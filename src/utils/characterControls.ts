@@ -21,8 +21,8 @@ export class CharacterControls {
     cameraTarget = new THREE.Vector3()
     
     // constants
-    fadeDuration: number = 0.2
-    runVelocity = 5
+    fadeDuration: number = 0.1
+    runVelocity = 2
     walkVelocity = 2
 
     constructor(model: THREE.Group,
@@ -61,6 +61,7 @@ export class CharacterControls {
 
         if (this.currentAction != play) {
             const toPlay = this.animationsMap.get(play)
+            
             const current = this.animationsMap.get(this.currentAction)
 
             current?.fadeOut(this.fadeDuration)
@@ -68,10 +69,11 @@ export class CharacterControls {
 
             this.currentAction = play
         }
-
+        
         this.mixer.update(delta)
 
         if (this.currentAction == 'Run' || this.currentAction == 'Walk') {
+        
             // calculate towards camera direction
             var angleYCameraDirection = Math.atan2(
                     (this.camera.position.x - this.model.position.x), 

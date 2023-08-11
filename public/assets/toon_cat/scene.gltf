@@ -1400,7 +1400,7 @@
           }
         }
       ],
-      "name": "Walk",
+      "name": "Run",
       "samplers": [
         {
           "input": 7,

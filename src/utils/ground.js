@@ -9,7 +9,7 @@ function createGroundPlane(scene) {
 
   scene.add(plane);
 
-  plane.position.y = -1;
+  plane.position.y = -0.01;
 
   return plane;
 }
